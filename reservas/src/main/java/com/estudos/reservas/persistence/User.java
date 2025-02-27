@@ -9,7 +9,6 @@ import lombok.*;
 @Data
 @Builder
 @AllArgsConstructor
-@NoArgsConstructor
 @Table(name = "tb_user", schema = "public")
 public class User {
     @Id

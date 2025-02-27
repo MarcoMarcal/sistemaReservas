@@ -2,15 +2,17 @@ package com.estudos.reservas.util;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
 import org.springframework.stereotype.Component;
 
+import javax.crypto.SecretKey;
 import java.util.Date;
 
 @Component
 public class JWTTokenUtil {
 
-    private String secretKey = "my-secret-key";
-    private long expirationTime = 1000 * 60 * 60;
+    private final SecretKey secretKey = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+    private final long expirationTime = 86400000;
 
     public String generateToken(String email) {
         return Jwts.builder()
@@ -21,22 +23,7 @@ public class JWTTokenUtil {
                 .compact();
     }
 
-    public boolean validateToken(String token) {
-        try {
-            var parser = Jwts.parser()
-                    .setSigningKey(secretKey)
-                    .build();
-            parser.parseClaimsJws(token);
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
-    }
-
-    public String getEmailFromToken(String token) {
-        var parser = Jwts.parser().setSigningKey(secretKey).build();
-
-        var claims = parser.parseClaimsJws(token).getBody();
-        return claims.getSubject();
+    public long getExpirationTime() {
+        return expirationTime;
     }
 }
