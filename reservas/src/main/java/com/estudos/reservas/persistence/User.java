@@ -2,6 +2,7 @@ package com.estudos.reservas.persistence;
 
 import com.estudos.reservas.enums.UserType;
 import jakarta.persistence.*;
+import jakarta.persistence.Table;
 import lombok.*;
 
 
