@@ -6,25 +6,23 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.List;
 
 @Configuration
 public class AuthenticationManagerConfig {
-    private final CustomUserDetailsService userDetailsService;
     private final PasswordEncoder passwordEncoder;
-
-    public AuthenticationManagerConfig(CustomUserDetailsService userDetailsService, PasswordEncoder passwordEncoder) {
-        this.userDetailsService = userDetailsService;
+    private final CustomUserDetailsService customUserDetailsService;
+    public AuthenticationManagerConfig(PasswordEncoder passwordEncoder, CustomUserDetailsService customUserDetailsService) {
         this.passwordEncoder = passwordEncoder;
+        this.customUserDetailsService = customUserDetailsService;
     }
 
     @Bean
     public AuthenticationManager authenticationManager() {
         var authProvider = new DaoAuthenticationProvider();
-        authProvider.setUserDetailsService(userDetailsService);
+        authProvider.setUserDetailsService(customUserDetailsService);
         authProvider.setPasswordEncoder(passwordEncoder);
         
         return new ProviderManager(List.of(authProvider));
