@@ -3,9 +3,11 @@ package com.estudos.reservas.persistence;
 import com.estudos.reservas.enums.TableStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 
 @Entity
 @AllArgsConstructor
+@Builder
 @jakarta.persistence.Table(name = "tb_tables", schema = "public")
 public class Table {
 
