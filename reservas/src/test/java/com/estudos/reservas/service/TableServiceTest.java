@@ -2,10 +2,9 @@ package com.estudos.reservas.service;
 
 import com.estudos.reservas.enums.TableStatus;
 import com.estudos.reservas.exception.TableAlreadyRegisterException;
-import com.estudos.reservas.model.table.CreateTableRequest;
+import com.estudos.reservas.model.table.TableRequest;
 import com.estudos.reservas.persistence.Table;
 import com.estudos.reservas.persistence.repository.TableRepository;
-import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -28,7 +27,7 @@ class TableServiceTest {
 
     @Test
     void createTable_success() {
-       var request = new CreateTableRequest(1,5);
+       var request = new TableRequest(1,5, TableStatus.DISPONIVEL);
        var response = service.createTable(request);
 
         Mockito.verify(tableRepository, times(1)).save(any());
@@ -37,7 +36,7 @@ class TableServiceTest {
 
     @Test
     void createTable_throwsException() {
-        var request = new CreateTableRequest(1,5);
+        var request = new TableRequest(1,5, TableStatus.DISPONIVEL);
         var table = Table.builder()
                 .numberTable(1)
                 .status(TableStatus.DISPONIVEL)
