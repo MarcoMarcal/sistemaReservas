@@ -14,7 +14,7 @@ public class SpringSecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/users/register", "/users/login", "/tables", "/tables/create").permitAll()
+                        .requestMatchers("/users/register", "/users/login", "/tables", "/tables/create", "/error").permitAll()
                         .anyRequest().authenticated()
                 )
                 .logout(LogoutConfigurer::permitAll
