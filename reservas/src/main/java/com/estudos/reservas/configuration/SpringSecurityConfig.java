@@ -14,7 +14,10 @@ public class SpringSecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/users/register", "/users/login", "/tables", "/tables/create", "/tables/delete/{tableNumber}", "/update/{numberTable}", "/error").permitAll()
+                        .requestMatchers("/users/register", "/users/login",
+                                "/tables", "/tables/create", "/tables/delete/{tableNumber}", "tables/update/{numberTable}",
+                                "/reservations",
+                                "/error").permitAll()
                         .anyRequest().authenticated()
                 )
                 .logout(LogoutConfigurer::permitAll

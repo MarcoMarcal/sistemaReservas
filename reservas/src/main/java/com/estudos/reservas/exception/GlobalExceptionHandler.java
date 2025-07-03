@@ -16,7 +16,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler({TableAlreadyRegisterException.class, UserRegisterException.class})
-    public ResponseEntity<ErrorResponse> handleCustomExceptions(TableNotFoundException ex) {
+    public ResponseEntity<ErrorResponse> handleCustomExceptions(Exception ex) {
         return ResponseEntity.status(HttpStatus.PRECONDITION_FAILED)
                 .body(new ErrorResponse(HttpStatus.PRECONDITION_FAILED.value(), ex.getMessage()));
     }
