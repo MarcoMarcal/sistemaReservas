@@ -1,29 +1,17 @@
 package com.estudos.reservas.service;
 
 import com.estudos.reservas.enums.TableStatus;
-import com.estudos.reservas.enums.UserType;
 import com.estudos.reservas.exception.TableAlreadyRegisterException;
-import com.estudos.reservas.exception.UserRegisterException;
-import com.estudos.reservas.model.authentication.AuthResponse;
-import com.estudos.reservas.model.authentication.UserLoginRequest;
-import com.estudos.reservas.model.authentication.UserRegisterRequest;
-import com.estudos.reservas.model.table.CreateTableRequest;
+import com.estudos.reservas.exception.TableNotFoundException;
+import com.estudos.reservas.model.table.TableRequest;
 import com.estudos.reservas.model.table.TableResponse;
 import com.estudos.reservas.persistence.Table;
-import com.estudos.reservas.persistence.User;
 import com.estudos.reservas.persistence.repository.TableRepository;
-import com.estudos.reservas.persistence.repository.UserRepository;
-import com.estudos.reservas.util.JWTTokenUtil;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -31,26 +19,51 @@ public class TableService {
 
     private final TableRepository tableRepository;
 
-    public TableResponse createTable(CreateTableRequest createTableRequest) {
-        tableRepository.findByNumberTable(createTableRequest.numberTable())
+    public TableResponse createTable(TableRequest tableRequest) {
+        tableRepository.findByNumberTable(tableRequest.numberTable())
                 .ifPresent(table -> {
                     throw new TableAlreadyRegisterException("Table Already Register");
                 });
 
-        saveTable(createTableRequest);
+        saveTable(tableRequest);
 
         return TableResponse.builder()
-                .numberTable(createTableRequest.numberTable())
+                .numberTable(tableRequest.numberTable())
                 .timeStamp(LocalDateTime.now())
                 .status("Table Registered")
                 .build();
     }
 
-    private void saveTable(CreateTableRequest createTableRequest) {
+    public void deleteTable(Integer tableNumber) {
+       tableRepository.findByNumberTable(tableNumber)
+            .ifPresentOrElse(tableRepository::delete,
+                    () -> {throw new TableNotFoundException("Table not found");}
+            );
+    }
+
+    public void updateTable(Integer tableNumber, TableRequest tableRequest) {
+        var table = tableRepository.findByNumberTable(tableNumber)
+                .orElseThrow(() -> new TableNotFoundException("Table not found"));
+
+        if (tableRequest.numberTable() != null) {
+            table.setNumberTable(tableRequest.numberTable());
+        }
+        if (tableRequest.tableStatus() != null) {
+            table.setStatus(tableRequest.tableStatus());
+        }
+        if (tableRequest.capacity() != null) {
+            table.setCapacity(tableRequest.capacity());
+        }
+
+        tableRepository.save(table);
+    }
+
+
+    private void saveTable(TableRequest tableRequest) {
         var table = Table.builder()
-                .numberTable(createTableRequest.numberTable())
+                .numberTable(tableRequest.numberTable())
                 .status(TableStatus.DISPONIVEL)
-                .capacity(createTableRequest.capacity())
+                .capacity(tableRequest.capacity())
                 .build();
 
         tableRepository.save(table);
